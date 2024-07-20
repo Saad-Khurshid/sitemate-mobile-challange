@@ -1,9 +1,11 @@
-import { FlatList } from "react-native";
 import React from "react";
+import { FlatList } from "react-native";
 import { useGetNewsQuery } from "@/api/API";
 import { Text, View } from "@/components/Themed";
 import Loader from "@/components/Loader";
 import { useTheme } from "@react-navigation/native";
+import { customAlphabet } from "nanoid/non-secure";
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
 
 type NewsListProps = {
   search: string;
@@ -17,14 +19,13 @@ const NewsList = (props: NewsListProps) => {
     error,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isLoading,
     isFetchingNextPage,
   } = useGetNewsQuery(props.search);
 
   const news = data?.pages.map((page) => page).flat();
 
-  const keyExtractor = (item: any) => item.id;
+  const keyExtractor = (_: any) => nanoid();
 
   const renderItem = ({ item }: { item: any }) => (
     <View
@@ -32,7 +33,6 @@ const NewsList = (props: NewsListProps) => {
         padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: colors.border,
-        backgroundColor: colors.card,
       }}
     >
       <Text
@@ -71,21 +71,28 @@ const NewsList = (props: NewsListProps) => {
   };
 
   return (
-    <View>
+    <View
+      style={{
+        backgroundColor: colors.background,
+      }}
+    >
       {isLoading ? (
-        <Loader />
-      ) : isFetching ? (
         <Loader />
       ) : isError ? (
         <Text>`Error: ${error.message}`</Text>
-      ) : (
+      ) : !!news?.length ? (
         <FlatList
           data={news}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           onEndReached={isFetchingNextPage ? () => null : onEndReached}
           onEndReachedThreshold={0.5}
+          extraData={news}
         />
+      ) : (
+        <Text style={{ textAlign: "center", padding: 16 }}>
+          No news articles found
+        </Text>
       )}
     </View>
   );

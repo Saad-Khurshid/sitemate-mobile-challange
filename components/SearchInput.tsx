@@ -35,6 +35,7 @@ const SearchBox: FC<SearchBoxProps> = ({ search, setSearch }) => {
         alignItems: "center",
         borderColor: "gray",
         borderWidth: 1,
+        backgroundColor: theme.colors.background,
       }}
     >
       <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>

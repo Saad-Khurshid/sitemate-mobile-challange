@@ -25,7 +25,6 @@ const getNews = async ({
       pageSize,
     },
   });
-
   return response.data.articles;
 };
 
@@ -33,7 +32,7 @@ export const useGetNewsQuery = (search: string) =>
   useInfiniteQuery({
     queryKey: ["news", { search }],
     queryFn: getNews,
-    initialPageParam: 0,
+    initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       (lastPage?.length ?? 0) === pageSize ? pages.length + 1 : undefined,
   });
